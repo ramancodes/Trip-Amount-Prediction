@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Trip Amount Prediction</title>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet'>
+    <link href='https://use.fontawesome.com/releases/v5.8.1/css/all.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        body {
+            background: #f5f5f5
+        }
+
+        .rounded {
+            border-radius: 1rem
+        }
+
+        .nav-pills .nav-link {
+            color: #555
+        }
+
+        .nav-pills .nav-link.active {
+            color: white
+        }
+
+        input[type="radio"] {
+            margin-right: 5px
+        }
+
+        .bold {
+            font-weight: bold
+        }
+        .btn-road {
+            margin: 10px;
+            width: 200px;
+        }
+
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+
+<body className='snippet-body'>
+    <div class="container py-5">
+        <!-- For demo purpose -->
+        <div class="row mb-4">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-6">Train Fare Prediction</h1>
+            </div>
+        </div> <!-- End -->
+        <div class="row">
+            <div class="col-lg-6 mx-auto">
+                <div class="card ">
+                    <div class="card-header">
+                        <!-- Flight form content -->
+                        <div class="tab-content">
+                            <div id="train" class="tab-pane fade show active pt-3">
+                                <div class="form-group">
+                                    <form id="flightForm" action="{{url_for('getTraindetails')}}" method="post">
+                                        <!--Source-->
+                                        <div class="form-group"> <label for="src">
+                                                <h6>Source</h6>
+                                            </label> <input type="text" name="src" placeholder="Source" required
+                                                class="form-control "> </div>
+
+                                        <!--Destination-->
+                                        <div class="form-group"> <label for="dest">
+                                                <h6>Destination</h6>
+                                            </label>
+                                            <div class="input-group"> <input type="text" name="dest"
+                                                    placeholder="Destination" class="form-control " required>
+                                            </div>
+                                        </div>
+
+                                        <!--Date-->
+                                        <div class="form-group">
+                                            <h6><label for="dateInput">Choose a date:</label></h6>
+                                            <input type="date" id="dateInput" class="form-control" name="dateInput" min="{{currentDate}}" required>
+                                        </div>
+
+                                        <!--Seat Type-->
+                                        <div class="form-group ">
+                                            <label for="seat_type">
+                                                <h6>Select Coach Type</h6>
+                                            </label>
+                                            <select class="form-control" id="ccmonth" name="seat_type" required>
+                                                <option value="" selected disabled>--Please select Coach Type--
+                                                </option>
+                                                <option value=4>Sleeper Class</option>
+                                                <option value=3>3 AC</option>
+                                                <option value=2>2 AC</option>
+                                                <option value=1>1 AC</option>
+                                            </select>
+                                        </div>
+
+                                        <!--Departure-->
+                                        <div class="form-group ">
+                                            <label for="departure_time">
+                                                <h6>Select Departure Time</h6>
+                                            </label>
+                                            <select class="form-control" id="ccmonth" name="departure_time" required>
+                                                <option value="" selected disabled>--Please select Departure Time --
+                                                </option>
+                                                <option value="Night">Night</option>
+                                                <option value="Early Morning">Early Morning</option>
+                                                <option value="Morning">Morning</option>
+                                                <option value="Afternoon">Afternoon</option>
+                                            </select>
+                                        </div>
+
+                                        <!--Arrival-->
+                                        <div class="form-group ">
+                                            <label for="arrival_time">
+                                                <h6>Select Arrival Time</h6>
+                                            </label>
+                                            <select class="form-control" id="ccmonth" name="arrival_time" required>
+                                                <option value="" selected disabled>--Please select Arrival Time --
+                                                </option>
+                                                <option value="Night">Night</option>
+                                                <option value="Early Morning">Early Morning</option>
+                                                <option value="Morning">Morning</option>
+                                                <option value="Afternoon">Afternoon</option>
+                                            </select>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary btn-road">Show Trip Cost</button>
+                                    </form>
+                                    <div id="date_result" class="mt-3"></div>
+                                </div>
+
+                                {% if data[0] == -1%}
+                                {{data[1]}}
+                                {% else %}
+                                <table>
+                                    <tr>
+                                        <th>Source</th>
+                                        <th>Destination</th>
+                                        <th>Cost</th>
+                                    </tr>
+                                    <tr>
+                                        <!--Source-->
+                                        {% if data[1] %}
+                                            <td>{{data[1]}}</td>
+                                        {% else %}
+                                            <td><i>Source</i></td>
+                                        {% endif %}
+                                        <!--Destination-->
+                                        {% if data[2] %}
+                                        <td>{{data[2]}}</td>
+                                        {% else %}
+                                        <td><i>Destination</i></td>
+                                        {% endif %}
+                                        <!--Fare-->
+                                        {% if(data[-1]) %}
+                                        <td>{{data[-1]}}</td>
+                                        {% else %}
+                                        <td><i>Fare</i></td>
+                                        {% endif %}
+                                    </tr>
+                                </table>
+                                {% endif %}
+                                <div class="card-footer">
+                                    </form>
+                                </div>
+                                <a href="{{url_for('home')}}"><button type="button" class="btn btn-primary btn-road">Home Page</button></a>
+                            </div> <!-- End -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script type='text/javascript'
+                src='https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js'></script>
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+            <script type='text/javascript'>$(function () {
+                    $('[data-toggle="tooltip"]').tooltip()
+                })</script>
+
+            <!-- <script type="text/javascript">
+                document.getElementById('flightForm').addEventListener('submit', function (event) {
+                    event.preventDefault(); // Prevent the form from submitting the traditional way
+                });
+            </script> -->
+</body>
+
+</html>

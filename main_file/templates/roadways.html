@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Trip Amount Prediction</title>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet'>
+    <link href='https://use.fontawesome.com/releases/v5.8.1/css/all.css' rel='stylesheet'>
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        body {
+            background: #f5f5f5
+        }
+
+        .rounded {
+            border-radius: 1rem
+        }
+
+        .nav-pills .nav-link {
+            color: #555
+        }
+
+        .nav-pills .nav-link.active {
+            color: white
+        }
+
+        input[type="radio"] {
+            margin-right: 5px
+        }
+
+        .bold {
+            font-weight: bold
+        }
+        .btn-road {
+            margin: 10px;
+            width: 200px;
+        }
+
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+
+<body className='snippet-body'>
+    <div class="container py-5">
+        <!-- For demo purpose -->
+        <div class="row mb-4">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-6">Roadways Amount Prediction</h1>
+            </div>
+        </div> <!-- End -->
+        <div class="row">
+            <div class="col-lg-6 mx-auto">
+                <div class="card ">
+                    <div class="card-header">
+                        <!-- Roadways form content -->
+                        <div class="tab-content">
+                            <!-- Source an destination Input info-->
+                            <div id="roadways" class="tab-pane fade show active pt-3">
+                                <form id="roadwaysform" action="{{url_for('getRoadwaysdetails')}}" method="post">
+                                    <div class="form-group"> <label for="src">
+                                            <h6>Source</h6>
+                                        </label> <input type="text" name="src" placeholder="Source" required
+                                            class="form-control "> </div>
+                                    <div class="form-group"> <label for="dest">
+                                            <h6>Destination</h6>
+                                        </label>
+                                        <div class="input-group"> <input type="text" name="dest"
+                                                placeholder="Destination" class="form-control " required>
+                                        </div>
+                                    </div>
+
+                                    <!--Vechile Type in Roadways-->
+                                    <h6 class="pb-2">Select your Vehicle type</h6>
+                                    <div class="form-group ">
+                                        <label class="radio-inline"> <input type="radio" name="road_vechile_type"
+                                                value="0" checked> Petrol Vehicle </label>
+                                        <label class="radio-inline"> <input type="radio" name="road_vechile_type"
+                                                value="1" class="ml-5"> Diesel Vehicle </label>
+                                        <label class="radio-inline"> <input type="radio" name="road_vechile_type"
+                                                value="2" class="ml-5"> CNG Vehicle </label>
+                                    </div>
+
+                                    <!--Distance Output-->
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <div class="form-group"> <label><span class="hidden-xs">
+                                                        <h6>Distance</h6>
+                                                    </span></label>
+                                                {% if(data[3]) %}
+                                                <p>{{data[1]}} -> {{data[2]}} : {{data[3]}} Km</p>
+                                                {% else %}
+                                                <p>Distance</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+                                    <button type="submit" class="btn btn-primary btn-road">Show Trip Cost</button>
+                                    <br>
+                                    {% if data[0] == -1%}
+                                    {{data[1]}}
+                                    {% else %}
+                                    <table>
+                                        <tr>
+                                            <th>Source</th>
+                                            <th>Destination</th>
+                                            <th>Vehicle Type</th>
+                                            <th>Distance</th>
+                                            <th>Cost</th>
+                                        </tr>
+                                        <tr>
+                                            <!--Source-->
+                                            {% if data[1] %}
+                                            <td>{{data[1]}}</td>
+                                            {% else %}
+                                            <td><i>Source</i></td>
+                                            {% endif %}
+                                            <!--Destination-->
+                                            {% if data[2] %}
+                                            <td>{{data[2]}}</td>
+                                            {% else %}
+                                            <td><i>Destination</i></td>
+                                            {% endif %}
+                                            <!--Vehicle type-->
+                                            {% if data[0]==0 %}
+                                            <td>Petrol</td>
+                                            {% elif data[0]==1 %}
+                                            <td>Diesel</td>
+                                            {% elif data[0]==2 %}
+                                            <td>CNG</td>
+                                            {% else %}
+                                            <td><i>Vehicle Type</i></td>
+                                            {% endif %}
+                                            <!--Distance-->
+                                            {% if data[3] %}
+                                            <td>{{data[3]}}</td>
+                                            {% else %}
+                                            <td><i>Distance</i></td>
+                                            {% endif %}
+                                            <!--Fare-->
+                                            {% if data[4] %}
+                                            <td>{{data[4]}}</td>
+                                            {% else %}
+                                            <td><i>Fare</i></td>
+                                            {% endif %}
+                                        </tr>
+                                    </table>
+                                    {% endif %}
+                                    <div class="card-footer">
+                                    <br>
+                                </form>
+                            </div>
+                            <a href="{{url_for('home')}}"><button type="button" class="btn btn-primary btn-road">Home Page</button></a>
+                        </div> <!-- End -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type='text/javascript'
+            src='https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js'></script>
+        <script type='text/javascript'>$(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            })</script>
+        <!-- <script type="text/javascript">
+                document.getElementById('flightForm').addEventListener('submit', function (event) {
+                    event.preventDefault(); // Prevent the form from submitting the traditional way
+                });
+            </script> -->
+</body>
+
+</html>
